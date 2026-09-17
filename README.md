@@ -108,7 +108,34 @@ echo "============================================="
 Script dari soal:
 
 ```
+#!/bin/bash
+# ============================================
+# Traffic Generator — Protocol 7 Network
+# Serial Experiments Lain — Modul 1 Jarkom 2026
+# Jalankan di node MIKA untuk generate traffic DNS & ICMP
+# ============================================
 
+echo "============================================"
+echo "  Protocol 7 Traffic Generator v2026"
+echo "  Node: Mika Iwakura"
+echo "============================================"
+echo "[*] Generating DNS & ICMP traffic..."
+
+# ICMP Traffic
+ping -c 5 8.8.8.8 &
+ping -c 5 1.1.1.1 &
+ping -c 3 its.ac.id &
+
+# DNS Queries
+nslookup google.com 8.8.8.8 &
+nslookup its.ac.id 8.8.8.8 &
+nslookup github.com 1.1.1.1 &
+dig @8.8.8.8 example.com A &
+dig @1.1.1.1 cloudflare.com AAAA &
+
+wait
+echo "[*] Traffic generation complete."
+echo "[*] Check Wireshark for captured packets."
 ```
 
 ![](img/2026-09-17-13-19-18-image.png)
@@ -503,7 +530,7 @@ mika_admin
 
 Connect ke nc dulu
 
-<img width="512" height="336" alt="image" src="https://github.com/user-attachments/assets/8ae606e8-67e7-4d61-ac30-37ad39e00ff0" />
+<img width="512" height="336" alt="image" src="img/soal14-01.png" />
 
 intinya ditanyain yang nyerang siapa yang di serang apa dan portnya berapa, password user lain_admin dan web server software dan versi berapa yang dilaporkan di response header?
 
@@ -513,7 +540,7 @@ Karena ini bruteforce ke form login kita filter aja Post ke login.php
 http.request.method == "POST" && http.request.uri == "/login.php"
 ```
 
-<img width="1920" height="1128" alt="image" src="https://github.com/user-attachments/assets/d7645418-ffaa-47f4-bc49-b207b560b2e0" />
+<img width="1920" height="1128" alt="image" src="img/soal14-02.png" />
 
 Bisa dilihat disini tuh ip  172.26.7.50 nyerang dan spam ke ip 172.26.7.100
 jadi yg nyerang tuh 172.26.7.50  dan yang di serang  172.26.7.100 untuk portnya 8080
@@ -524,11 +551,11 @@ jadi yg nyerang tuh 172.26.7.50  dan yang di serang  172.26.7.100 untuk portnya 
 frame contains "lain_admin"
 ```
 
-<img width="1920" height="1128" alt="image" src="https://github.com/user-attachments/assets/87021b6d-b13f-41ce-9f71-d46455be495f" />
+<img width="1920" height="1128" alt="image" src="img/soal14-03.png" />
 
 Follow TCP Stream 
 
-<img width="1920" height="1128" alt="image" src="https://github.com/user-attachments/assets/9939b0f9-841b-4ab9-80d1-7a20b345e5ba" />
+<img width="1920" height="1128" alt="image" src="img/soal14-04.png" />
 
 Ketemu Password sama Softwarenya
 
@@ -539,7 +566,7 @@ KOMJAR26{W1r3d_Brut3_FGiR2LkTjDaBkskZAuazHKpIM}
 
 15. Eiri menyusup ke ruang server dan memasang perangkat keyboard USB berbahaya pada node Alice. Buka file capture wired_usb_hid.pcap, identifikasi Vendor ID dan Product ID perangkat USB dari deskriptor USB, alamat nomor device USB, serta pesan rahasia yang berhasil dicuri dari keystroke. Validasi temuan kalian pada socket server: (link file) nc [IP_Group] 3402 
 
-<img width="1245" height="652" alt="image" src="https://github.com/user-attachments/assets/41e33dc4-6195-49ed-ac1b-093b02821ab7" />
+<img width="1245" height="652" alt="image" src="img/soal15-01.png" />
 
 kita ditanya Vendor ID, Product Id USB HID Devicenya, USB device address yg digunakan dan disuruh decode USB HID Keystroke.
 
@@ -548,7 +575,7 @@ kita ditanya Vendor ID, Product Id USB HID Devicenya, USB device address yg digu
 ```text
 usb.idVendor
 ```
-<img width="1920" height="1128" alt="image" src="https://github.com/user-attachments/assets/31cb472c-963e-44ac-ba8e-1b5a2f6524ff" />
+<img width="1920" height="1128" alt="image" src="img/soal15-02.png" />
 
 Disini id vendornya 0x046d kebetulan nemu jg id productnya 0xc31c tapi klo mau filter sendiri bisa jg pake:
 ```text
@@ -560,7 +587,7 @@ usb.idProduct
 usb.device_address!=0
 ```
 
-<img width="1920" height="1128" alt="image" src="https://github.com/user-attachments/assets/02d6b6a1-1ebd-47ab-a3f3-6854eb2f17fc" />
+<img width="1920" height="1128" alt="image" src="img/soal15-03.png" />
 
 Disini Device Addressnya 7
 3) Decode
@@ -568,7 +595,7 @@ Disini Device Addressnya 7
 usb.capdata != 00:00:00:00:00:00:00:00
 ```
 Pake filter itu lalu
-<img width="1920" height="1128" alt="image" src="https://github.com/user-attachments/assets/4cc06bdc-f0f0-4ded-af2a-21c9584045e8" />
+<img width="1920" height="1128" alt="image" src="img/soal15-04.png" />
 
 cek USB URB di Leftover Capture Data, ambil bytes ketiga dari semua itu berikut contoh yg udah diambil
 ```text
@@ -589,16 +616,16 @@ FLAG:
 ```
 16. Eiri meletakkan file malware di server. Dari file capture wired_ftp_theft.pcap, lakukan analisis lalu lintas FTP untuk mengidentifikasi alamat IP server FTP penyerang, banner software FTP yang digunakan, kredensial login penyerang, serta ukuran (size in bytes) dari file malware knights_payload.exe yang diunduh. Validasi temuan kalian pada socket server: (link file) nc [IP_Group] 3403 
 
-<img width="1156" height="766" alt="image" src="https://github.com/user-attachments/assets/e00326a6-eada-47ef-a1ff-d2b43e5a299f" />
+<img width="1156" height="766" alt="image" src="img/soal16-01.png" />
 
 1) Filter biar yg muncul tuh traffic download dari file ftp aja
 ```text
 ftp.request.command == "RETR"
 ```
-<img width="1920" height="1140" alt="image" src="https://github.com/user-attachments/assets/6fd76024-cb86-42f6-a095-def6488dce79" />
+<img width="1920" height="1140" alt="image" src="img/soal16-02.png" />
 
 Nah ada 3 tapi yg di tanya malware jadi kita tcp stream yg knight_payload.exe oyaa untuk What is the IP address of the FTP server used to download the malware? itu ada di destination.
-<img width="1920" height="1140" alt="image" src="https://github.com/user-attachments/assets/af21c131-f8f5-4790-88e5-d39d5442d06b" />
+<img width="1920" height="1140" alt="image" src="img/soal16-03.png" />
 
 ini untuk tampilan tcp streamnya yang ditanyain tadi What FTP server software banner is returned upon connection? itu ada “vsftpd 3.0.5” terus user password dan size jga udh ada di sini.
 
@@ -609,16 +636,16 @@ KOMJAR26{FTP_Th3ft_JP7yDIDYOlzCeSL40aNnnWcV9}
 
 17. Alice membuat halaman web di node-nya. Eiri memanfaatkan celah untuk mengunduh payload berbahaya ke sistem Alice. Analisis file capture wired_http_c2.pcap untuk mengidentifikasi nama domain (Host) tempat malware diunduh, alamat IP server penyerang, nama file executable malware yang diunduh, serta kode status HTTP yang dikembalikan. Validasi temuan kalian pada socket server: (link file) nc [IP_Group] 3404 
 
-<img width="1053" height="478" alt="image" src="https://github.com/user-attachments/assets/14cacb4c-b778-4cd5-b56a-c9c8ce5d634a" />
+<img width="1053" height="478" alt="image" src="img/soal17-01.png" />
 
 1) Menyaring trafic yang request mengunduh atau mengakses file exe
 ```text
 http.request.uri contains ".exe"
 ```
-<img width="1920" height="1128" alt="image" src="https://github.com/user-attachments/assets/9f030759-ac46-4def-a6d4-ec4f44b1e8d7" />
+<img width="1920" height="1128" alt="image" src="img/soal17-02.png" />
 Dari sini langsung HTTP/TCP Stream aja
 
-<img width="1920" height="1128" alt="image" src="https://github.com/user-attachments/assets/2a78c8dc-2580-4e75-8bb0-25d88504ebfb" />
+<img width="1920" height="1128" alt="image" src="img/soal17-03.png" />
 
 Nah dapet tuh host, nama file malware payload sama http status responses untuk ipnya ada di gambar sebelumnya.
 
@@ -629,17 +656,17 @@ KOMJAR26{Navi_C2_D0wnl04d_sopLvkEmLS99gMVQOcvru3FWj}
 
 18. Eiri mengubah taktik penyerangan dengan menanamkan file malware menggunakan protokol file sharing SMB. Analisis file capture wired_smb_transfer.pcapng untuk mengidentifikasi nama protokol jaringan yang dieksploitasi, IP pengirim dan penerima, folder tujuan penyimpanan malware pada sistem korban, serta nama file executable malware yang ditransfer. Validasi temuan kalian pada socket server: (link file) nc [IP_Group] 3405
 
-<img width="1129" height="604" alt="image" src="https://github.com/user-attachments/assets/b78a63b4-b8a7-4179-9247-160d7f01a566" />
+<img width="1129" height="604" alt="image" src="img/soal18-01.png" />
 
 1) Filter supaya hanya menampilkan trafic jaringan yang sedang mentransfer file exe.
 ```text
 smb2.filename contains "exe"
 ```
-<img width="1920" height="1128" alt="image" src="https://github.com/user-attachments/assets/db13c895-5f8d-4d5a-ab4f-a81d7da3e443" />
+<img width="1920" height="1128" alt="image" src="img/soal18-02.png" />
 
 protocolnya SMB2 untuk ip yg ngirim malware 10.7.3.100 dan ip yg nerima malware 10.7.1.50 lalu kita buka salah satu terus buka SMB2 dan Guid Handle
 
-<img width="1920" height="1128" alt="image" src="https://github.com/user-attachments/assets/8e40584f-57d0-41d0-a118-2adb6d6fa04d" />
+<img width="1920" height="1128" alt="image" src="img/soal18-03.png" />
 
 bakal ada directory sama nama filenya.
 FLAG: 
@@ -648,7 +675,7 @@ KOMJAR26{SMB_Tr4nsf3r_CGxOjOH7b8nlH1ZurdYCQmfih}
 ```
 19. Eiri meneror jaringan dengan mengirimkan email pemerasan melalui protokol SMTP tanpa enkripsi. Analisis file capture wired_smtp_threat.pcap pada stream TCP terkait, identifikasi alamat email korban yang ditargetkan, password korban yang diklaim bocor oleh penyerang, jenis malware yang diinfeksikan, batas waktu (dalam hari) yang diberikan, serta MailClientID yang tercantum pada pesan. Validasi temuan kalian pada socket server: (link file) nc [IP_Group] 3406 
 
-<img width="1231" height="736" alt="image" src="https://github.com/user-attachments/assets/6c734661-2235-46be-a5b8-6c52f2b12ed1" />
+<img width="1231" height="736" alt="image" src="img/soal19-01.png" />
 
 intinya disuruh nyari email yg jadi target terus password, jenis malware,deadline dan MailClientIDnya
 
@@ -656,12 +683,12 @@ intinya disuruh nyari email yg jadi target terus password, jenis malware,deadlin
 ```text
 smtp.req.command == "RCPT"
 ```
-<img width="1920" height="1140" alt="image" src="https://github.com/user-attachments/assets/d0a01feb-18aa-4144-ab8b-fa2e4719b8db" />
+<img width="1920" height="1140" alt="image" src="img/soal19-02.png" />
 
 disini ada 3 email tapi yang mencurigakan victim@protocol7.co.jp
 saat kita tcp stream 
 
-<img width="1920" height="1140" alt="image" src="https://github.com/user-attachments/assets/4a51b645-b1b5-40a4-8983-57092ffce636" />
+<img width="1920" height="1140" alt="image" src="img/soal19-03.png" />
 
 Ada percakapan kaya ancaman gituu yang isinya tuh jawaban dari soal 19
 
@@ -671,39 +698,39 @@ KOMJAR26{SMTP_Ext0rt10n_z27nUNA8Uri3niZLGl03HcMmT}
 ```
 20. Untuk rencana pamungkasnya, Eiri menyembunyikan komunikasi malware di balik saluran terenkripsi TLS. Namun Alice telah menyediakan file keylog untuk mendekripsi lalu lintas data tersebut. Analisis file capture wired_tls_decrypt.pcapng bersama keyslogfile.txt untuk mengidentifikasi versi protokol TLS yang dinegosiasikan, nama domain (SNI) yang diakses, alamat IP server HTTPS penyerang, User-Agent yang digunakan, serta HTTP request method dan path yang tersembunyi di dalam sesi dekripsi. Validasi temuan kalian pada socket server: (link file) nc [IP_Group] 3407 
 
-<img width="1234" height="742" alt="image" src="https://github.com/user-attachments/assets/40f6231b-d672-41f6-9675-bf418941f041" />
+<img width="1234" height="742" alt="image" src="img/soal20-01.png" />
 
 1) Okee pertama kita harus masukin dulu keyslogfile.txt ke wiresharknya caranya tuh edit > protocols > TLS > masukin filenya ke (Pre)-Master-Secret log filename.
-<img width="1054" height="853" alt="image" src="https://github.com/user-attachments/assets/38b5239b-9b8a-4a59-9383-bfb3189e034d" />
+<img width="1054" height="853" alt="image" src="img/soal20-02.png" />
 
 ini tampilan setelahnya
 
-<img width="1920" height="1128" alt="image" src="https://github.com/user-attachments/assets/b77cb066-3ef6-4645-8247-f4b7bcefdbf3" />
+<img width="1920" height="1128" alt="image" src="img/soal20-03.png" />
 
 Oke untuk pertanyaan pertama What specific TLS protocol version was negotiated for the encrypted communication? ini tuh ada di Transport Layer Security yaitu TLS 1.2 sebenernya kalo jawab TLSv1.2 jugaa benarr.
 
 Oke untuk pertanyaan kedua What domain name (SNI / Host) was requested by the client during the TLS handshake?
 
-<img width="1920" height="1128" alt="image" src="https://github.com/user-attachments/assets/98512780-2646-4a5a-a6a9-eb64d63255c7" />
+<img width="1920" height="1128" alt="image" src="img/soal20-04.png" />
 Aku tls stream yang no 1 atau bisa liat aja itu SNI=example.com 
 
 Pertanyaan ketiga What is the IP address of the HTTPS server? ada disini
-<img width="1920" height="1128" alt="image" src="https://github.com/user-attachments/assets/b6bd7ecf-12d0-4c13-a0ad-ad8241bb2dab" />
+<img width="1920" height="1128" alt="image" src="img/soal20-05.png" />
 
 Pertanyaan selanjutnya What User-Agent string was used by the client during the decrypted HTTP session? filter supaya cuma menampilkan http.request
 ```text
 http.request
 ```
 
-<img width="1920" height="1128" alt="image" src="https://github.com/user-attachments/assets/5d420f7f-8d43-450b-a8a4-a52d1c2b6194" />
+<img width="1920" height="1128" alt="image" src="img/soal20-06.png" />
 
 Lalu HTTP stream
-<img width="1920" height="1128" alt="image" src="https://github.com/user-attachments/assets/8570d57a-eda2-4901-8db7-d10292db499a" />
+<img width="1920" height="1128" alt="image" src="img/soal20-07.png" />
 
 Yeyy ketemu 
 oke pertanyaan terakhir What HTTP request method and path was sent in the decrypted request? ada disini
 
-<img width="1920" height="1128" alt="image" src="https://github.com/user-attachments/assets/6b376ecf-0c8e-47af-974e-019edafe3fd4" />
+<img width="1920" height="1128" alt="image" src="img/soal20-08.png" />
 sebenernya di info dan http stream tadi jugaa ada.
 
 FLAG:
